@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.27;
 
-interface ITimeLockEngine {
+interface ITimeLock {
     
     struct QueueEntry {
         uint256 proposalId;
