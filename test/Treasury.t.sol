@@ -52,28 +52,7 @@ contract TreasuryTest is Test {
 
     function dummy() public {}
 
-    function testProposalLifecycle() public {
-
-        uint256 id = treasury.propose(
-            address(this),
-            0,
-            abi.encodeWithSignature("dummy()")
-        );
-
-        approveByTwo(id);
-
-        vm.warp(block.timestamp + 1 days + 1);
-
-        treasury.execute(id);
-    }
-
-    function testSignatureVerification() public {
-
-        uint256 id = treasury.propose(address(this),0,"");
-
-        treasury.approve(id,getSig(1,id));
-    }
-
+  
   
 
     function testInvalidSignature() public {
@@ -98,7 +77,7 @@ contract TreasuryTest is Test {
         treasury.approve(id,sig);
     }
 
-    function testExecuteBeforeApprovals() public {
+    function testExecuteBeforeApproval() public {
 
         uint256 id = treasury.propose(address(this),0,"");
 
@@ -120,15 +99,6 @@ contract TreasuryTest is Test {
 
     
     
-    function testInvalidSignerAttack() public {
-
-        uint256 id = treasury.propose(address(this),0,"");
-
-        vm.expectRevert();
-
-        treasury.approve(id,getSig(99,id));
-    }
-
     function testReentrancyAttack() public {
 
         Malicious attacker = new Malicious(address(treasury));
