@@ -9,22 +9,22 @@ contract TreasuryTest is Test {
 
     AresTreasury treasury;
 
-    address signer1;
-    address signer2;
-    address signer3;
+    address Marvel = vm.addr(1);
+    address Richard = vm.addr(2);
+    address Bob = vm.addr(3);
 
    
 
     function setUp() public {
 
-        signer1 = vm.addr(1);
-        signer2 = vm.addr(2);
-        signer3 = vm.addr(3);
+        Marvel = vm.addr(1);
+        Richard = vm.addr(2);
+        Bob = vm.addr(3);
 
         address[] memory signers = new address[](3);
-        signers[0] = signer1;
-        signers[1] = signer2;
-        signers[2] = signer3;
+        signers[0] = Marvel;
+        signers[1] = Richard;
+        signers[2] = Bob;
 
         treasury = new AresTreasury(signers,2);
 
