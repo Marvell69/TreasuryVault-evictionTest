@@ -9,22 +9,22 @@ contract TreasuryTest is Test {
 
     AresTreasury treasury;
 
-    address Marvel = vm.addr(1);
-    address Richard = vm.addr(2);
-    address Bob = vm.addr(3);
+    address signer1;
+    address signer2;
+    address signer3;
 
    
 
     function setUp() public {
 
-        Marvel = vm.addr(1);
-        Richard = vm.addr(2);
-        Bob = vm.addr(3);
+        signer1 = vm.addr(1);
+        signer2 = vm.addr(2);
+        signer3 = vm.addr(3);
 
         address[] memory signers = new address[](3);
-        signers[0] = Marvel;
-        signers[1] = Richard;
-        signers[2] = Bob;
+        signers[0] = signer1;
+        signers[1] = signer2;
+        signers[2] = signer3;
 
         treasury = new AresTreasury(signers,2);
 
@@ -52,7 +52,28 @@ contract TreasuryTest is Test {
 
     function dummy() public {}
 
-  
+    function testProposalLifecycle() public {
+
+        uint256 id = treasury.propose(
+            address(this),
+            0,
+            abi.encodeWithSignature("dummy()")
+        );
+
+        approveByTwo(id);
+
+        vm.warp(block.timestamp + 1 days + 1);
+
+        treasury.execute(id);
+    }
+
+    function testSignatureVerification() public {
+
+        uint256 id = treasury.propose(address(this),0,"");
+
+        treasury.approve(id,getSig(1,id));
+    }
+
   
 
     function testInvalidSignature() public {
@@ -77,7 +98,7 @@ contract TreasuryTest is Test {
         treasury.approve(id,sig);
     }
 
-    function testExecuteBeforeApproval() public {
+    function testExecuteBeforeApprovals() public {
 
         uint256 id = treasury.propose(address(this),0,"");
 
@@ -99,6 +120,15 @@ contract TreasuryTest is Test {
 
     
     
+    function testInvalidSignerAttack() public {
+
+        uint256 id = treasury.propose(address(this),0,"");
+
+        vm.expectRevert();
+
+        treasury.approve(id,getSig(99,id));
+    }
+
     function testReentrancyAttack() public {
 
         Malicious attacker = new Malicious(address(treasury));
